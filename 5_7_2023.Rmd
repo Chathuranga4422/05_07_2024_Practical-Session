@@ -1,0 +1,94 @@
+---
+title: "Untitled"
+author: "B.D.H Chathuranga-(PS/2020/141)"
+date: "2024-07-05"
+output: word_document
+---
+
+```{r}
+#libraries
+install.packages("car")
+install.packages("Psych")
+
+library(car)
+
+library(psych)
+
+head(cars)
+
+nrow(cars)
+
+num_missing_values <- sum(is.na(cars))
+
+print(num_missing_values)
+
+summary(cars)
+
+
+#calculate descriptive statistics for x and y
+describe(cars[c("speed","dist")])
+
+#boxplot for 'dist' variable
+boxplot(cars$dist,main = "Dist", sub = paste("Outlier :",boxplot.stats(cars$dist)$out))
+
+#boxplot for 'speed' variable
+boxplot(cars$speed,main = "speed", sub = paste("Outlier :",boxplot.stats(cars$speed)$out))
+
+
+#Identifying the rows containing outliers in the 'dist' variable
+outlier_rows <- boxplot.stats(cars$dist)$out
+
+#Filter the 'cars' dataset to exclude the rows with outliers in 'dist'
+cars_cleaned <- subset(cars,!(dist %in% outlier_rows))
+
+head(cars_cleaned)
+
+nrow(cars_cleaned)
+boxplot(cars_cleaned$dist,main = "Dist", sub = paste("Outlier rows :",boxplot.stats(cars_cleaned$dist)$out))
+
+
+boxplot(cars_cleaned$speed,main = "speed", sub = paste("Outlier rows :",boxplot.stats(cars_cleaned$speed)$out))
+
+
+library(ggplot2)
+
+ggplot(cars_cleaned, aes(speed,dist))+ geom_point() + stat_smooth(method = lm)
+
+#Correlation between speed and distance
+cor(cars_cleaned$speed,cars_cleaned$dist)
+
+#Computation
+
+#Simple liner regression
+fit2 <- lm(dist~speed,data = cars_cleaned)
+fit2
+
+summary(fit2)
+
+
+#Coefficient sihnificance
+
+Coef1 <- summary(fit2)$coefficients #coefficient matrix
+Coef1
+
+
+#Statndard errors and confidence itervals
+confint(fit2)
+
+#The residual plots
+#Residual vs fitted
+plot(fit2,which = 1,col = c("blue"))
+
+
+
+#Q-Q plot
+plot(fit2,which = 2,col = c("red"))
+
+#Scale location
+plot(fit2,which = 3,col = c("green"))
+
+
+
+
+```
+
